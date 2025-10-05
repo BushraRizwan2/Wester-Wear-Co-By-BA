@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { products as allProducts } from '../data/products';
+import { useProducts } from '../contexts/ProductContext';
 import type { Product } from '../types';
 import ProductCard from './ProductCard';
 
@@ -16,6 +16,8 @@ interface RecommendedProductsProps {
 }
 
 const RecommendedProducts: React.FC<RecommendedProductsProps> = ({ currentProduct }) => {
+  const { products: allProducts } = useProducts();
+
   const recommendedProducts = useMemo(() => {
     const currentProductRating = getAverageRating(currentProduct);
     const MAX_RECOMMENDATIONS = 4;
@@ -47,7 +49,7 @@ const RecommendedProducts: React.FC<RecommendedProductsProps> = ({ currentProduc
 
     return recommendations;
 
-  }, [currentProduct]);
+  }, [currentProduct, allProducts]);
 
   if (recommendedProducts.length === 0) {
     return null;

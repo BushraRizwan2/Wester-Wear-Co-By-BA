@@ -2,7 +2,9 @@ import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 interface AuthContextType {
   isAuthenticated: boolean;
+  isAdmin: boolean;
   login: () => void;
+  loginAdmin: (user: string, pass: string) => boolean;
   logout: () => void;
 }
 
@@ -10,18 +12,31 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   const login = () => {
     // In a real app, this would involve token handling, etc.
     setIsAuthenticated(true);
+    setIsAdmin(false);
+  };
+
+  const loginAdmin = (user: string, pass: string) => {
+    // In a real app, you would validate against a backend.
+    if (user === 'admin' && pass === 'password') {
+      setIsAuthenticated(true);
+      setIsAdmin(true);
+      return true;
+    }
+    return false;
   };
 
   const logout = () => {
     setIsAuthenticated(false);
+    setIsAdmin(false);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, loginAdmin, logout }}>
       {children}
     </AuthContext.Provider>
   );

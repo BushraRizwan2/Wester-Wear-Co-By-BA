@@ -1,9 +1,8 @@
-
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import Spinner from '../components/Spinner';
-import { products as allProducts } from '../data/products';
+import { useProducts } from '../contexts/ProductContext';
 import type { Product } from '../types';
 import Breadcrumbs from '../components/Breadcrumbs';
 
@@ -19,13 +18,14 @@ const getAverageRating = (product: Product): number => {
 
 const ProductListPage: React.FC = () => {
   const { categoryName } = useParams<{ categoryName: 'summer' | 'winter' }>();
+  const { products: allProducts } = useProducts();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState<SortOption>('default');
 
   useEffect(() => {
     setLoading(true);
-    // Simulate API call
+    // Simulate API call delay
     const timer = setTimeout(() => {
       if (categoryName) {
         const filteredProducts = allProducts.filter(
@@ -35,10 +35,10 @@ const ProductListPage: React.FC = () => {
         setSortBy('default'); // Reset sort when category changes
       }
       setLoading(false);
-    }, 500);
+    }, 300); // Shorter delay as data is now local
 
     return () => clearTimeout(timer);
-  }, [categoryName]);
+  }, [categoryName, allProducts]);
 
   const sortedProducts = useMemo(() => {
     const sortableProducts = [...products]; // Create a copy to avoid mutating state

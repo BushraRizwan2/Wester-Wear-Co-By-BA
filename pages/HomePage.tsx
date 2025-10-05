@@ -1,11 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { products } from '../data/products';
+import { useProducts } from '../contexts/ProductContext';
 import ProductCard from '../components/ProductCard';
 
-const featuredProducts = products.filter(p => ['S001', 'W003', 'S004', 'W002'].includes(p.id));
-
 const HomePage: React.FC = () => {
+  const { products } = useProducts();
+  const featuredProducts = products.filter(p => ['S001', 'W003', 'S004', 'W002'].includes(p.id));
+
   return (
     <div className="space-y-24">
       {/* Hero Section */}

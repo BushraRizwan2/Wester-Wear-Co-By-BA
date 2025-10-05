@@ -7,6 +7,7 @@ import { WishlistProvider } from './contexts/WishlistContext';
 import { SearchProvider } from './contexts/SearchContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
+import { ProductProvider } from './contexts/ProductContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -19,13 +20,15 @@ root.render(
     <HashRouter>
       <AuthProvider>
         <ToastProvider>
-          <CartProvider>
-            <WishlistProvider>
-              <SearchProvider>
-                <App />
-              </SearchProvider>
-            </WishlistProvider>
-          </CartProvider>
+          <ProductProvider>
+            <CartProvider>
+              <WishlistProvider>
+                <SearchProvider>
+                  <App />
+                </SearchProvider>
+              </WishlistProvider>
+            </CartProvider>
+          </ProductProvider>
         </ToastProvider>
       </AuthProvider>
     </HashRouter>

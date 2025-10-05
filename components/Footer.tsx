@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 
 const SocialIcon: React.FC<{ href: string; children: React.ReactNode; label: string }> = ({ href, children, label }) => (
   <a href={href} className="text-gray-300 hover:text-white transition-colors duration-300" aria-label={label} target="_blank" rel="noopener noreferrer">
@@ -50,7 +51,7 @@ const Footer: React.FC = () => {
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Help & FAQ</a></li>
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Shipping & Returns</a></li>
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Size Guide</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Contact Us</a></li>
+              <li><Link to="/admin" className="text-gray-300 hover:text-white transition-colors duration-300">Admin Portal</Link></li>
             </ul>
           </div>
 

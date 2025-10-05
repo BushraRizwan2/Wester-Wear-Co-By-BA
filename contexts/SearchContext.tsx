@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 import type { Product } from '../types';
-import { products as allProducts } from '../data/products';
+import { useProducts } from './ProductContext';
 
 interface SearchContextType {
   searchQuery: string;
@@ -11,6 +11,7 @@ interface SearchContextType {
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
 export const SearchProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+  const { products: allProducts } = useProducts();
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<Product[]>([]);
 

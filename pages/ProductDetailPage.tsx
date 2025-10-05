@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { products as allProducts } from '../data/products';
+import { useProducts } from '../contexts/ProductContext';
 import type { Product } from '../types';
 import Spinner from '../components/Spinner';
 import { useCart } from '../contexts/CartContext';
@@ -26,6 +25,7 @@ const HeartIconOutline = () => (
 
 const ProductDetailPage: React.FC = () => {
   const { productId } = useParams<{ productId: string }>();
+  const { getProductById } = useProducts();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
@@ -35,16 +35,16 @@ const ProductDetailPage: React.FC = () => {
 
   useEffect(() => {
     setLoading(true);
-    // Simulate API call
+    // Simulate API call delay
     const timer = setTimeout(() => {
-      const foundProduct = allProducts.find((p) => p.id === productId) || null;
+      const foundProduct = getProductById(productId!) || null;
       setProduct(foundProduct);
       setLoading(false);
       window.scrollTo(0, 0); // Scroll to top on product change
-    }, 500);
+    }, 300);
 
     return () => clearTimeout(timer);
-  }, [productId]);
+  }, [productId, getProductById]);
 
   const handleAddToCart = () => {
     if (product) {
@@ -129,7 +129,7 @@ const ProductDetailPage: React.FC = () => {
           </div>
         </div>
         
-        <ProductReviews initialReviews={product.reviews || []} />
+        <ProductReviews productId={product.id} initialReviews={product.reviews || []} />
       </div>
       
       <RecommendedProducts currentProduct={product} />

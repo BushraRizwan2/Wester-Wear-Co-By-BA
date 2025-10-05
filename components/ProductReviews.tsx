@@ -1,6 +1,6 @@
-
 import React, { useState } from 'react';
 import type { Review } from '../types';
+import { useProducts } from '../contexts/ProductContext';
 
 // Helper component for displaying static star ratings
 const StarRatingDisplay: React.FC<{ rating: number; className?: string }> = ({ rating, className = '' }) => (
@@ -43,10 +43,12 @@ const StarRatingInput: React.FC<{
 );
 
 interface ProductReviewsProps {
+  productId: string;
   initialReviews: Review[];
 }
 
-const ProductReviews: React.FC<ProductReviewsProps> = ({ initialReviews = [] }) => {
+const ProductReviews: React.FC<ProductReviewsProps> = ({ productId, initialReviews = [] }) => {
+  const { addReview } = useProducts();
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [newRating, setNewRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -54,6 +56,12 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ initialReviews = [] }) 
   const [authorName, setAuthorName] = useState('');
   const [errors, setErrors] = useState<{ rating?: string; comment?: string; name?: string }>({});
   const [submitted, setSubmitted] = useState(false);
+  
+  // Keep reviews in sync with global state
+  useState(() => {
+    setReviews(initialReviews);
+  }, [initialReviews]);
+
 
   const averageRating = reviews.length > 0
     ? reviews.reduce((acc, review) => acc + review.rating, 0) / reviews.length
@@ -68,14 +76,17 @@ const ProductReviews: React.FC<ProductReviewsProps> = ({ initialReviews = [] }) 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
+      const reviewData = { author: authorName, rating: newRating, comment: newComment };
+      addReview(productId, reviewData);
+
+      // We need to manually update local state as context update won't re-trigger prop change
       const newReview: Review = {
+        ...reviewData,
         id: `R${Date.now()}`,
-        author: authorName,
-        rating: newRating,
-        comment: newComment,
         date: new Date().toISOString(),
       };
       setReviews([newReview, ...reviews]);
+      
       setNewRating(0);
       setNewComment('');
       setAuthorName('');
