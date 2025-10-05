@@ -85,7 +85,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="bg-surface shadow-md fixed top-0 left-0 right-0 z-50">
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-8">
+      <nav className="container mx-auto px-2 sm:px-4 lg:px-6">
         <div className="flex items-center justify-between h-20">
           <div className="flex items-center">
             <div className="flex-shrink-0">

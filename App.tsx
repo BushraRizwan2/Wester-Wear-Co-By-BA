@@ -22,7 +22,7 @@ import AdminProductsPage from './pages/admin/AdminProductsPage';
 const SiteLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="flex flex-col min-h-screen">
     <Header />
-    <main className="flex-grow container mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
+    <main className="flex-grow container mx-auto px-2 sm:px-4 lg:px-6 pt-20 pb-8">
       {children}
     </main>
     <Footer />

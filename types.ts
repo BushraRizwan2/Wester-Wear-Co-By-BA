@@ -33,4 +33,6 @@ export interface CartItem extends Product {
 export interface ChatMessage {
   sender: 'user' | 'bot';
   text: string;
+  isApiKeyError?: boolean;
+  products?: Product[];
 }

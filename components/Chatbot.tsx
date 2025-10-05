@@ -1,4 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useChatbot } from '../hooks/useChatbot';
 import { useAPIKey } from '../contexts/APIKeyContext';
 
@@ -95,8 +97,36 @@ const Chatbot: React.FC = () => {
                 <div className="space-y-4">
                     {messages.map((msg, index) => (
                         <div key={index} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                            <div className={`max-w-[80%] p-3 rounded-xl whitespace-pre-wrap ${msg.sender === 'user' ? 'bg-accent text-white' : 'bg-white text-text-primary shadow-sm'}`}>
-                                {msg.text}
+                            <div className={`max-w-[85%] p-3 rounded-xl ${msg.sender === 'user' ? 'bg-accent text-white' : 'bg-white text-text-primary shadow-sm'}`}>
+                                <p className="whitespace-pre-wrap">{msg.text}</p>
+                                {msg.products && msg.products.length > 0 && (
+                                    <div className="mt-3 space-y-2 border-t border-gray-200 pt-3">
+                                        {msg.products.map(product => (
+                                            <div key={product.id} className="flex items-start gap-3">
+                                                <img src={product.imageUrls[0]} alt={product.name} className="w-12 h-12 object-cover rounded-md flex-shrink-0" />
+                                                <div className="flex-1 min-w-0">
+                                                    <p className="font-semibold text-sm text-text-primary truncate">{product.name}</p>
+                                                    <p className="text-sm text-primary font-bold">${product.price.toFixed(2)}</p>
+                                                </div>
+                                                <Link
+                                                    to={`/product/${product.id}`}
+                                                    onClick={() => setIsOpen(false)}
+                                                    className="self-center bg-gray-100 text-text-secondary text-xs font-bold py-1.5 px-3 rounded-full hover:bg-gray-200 hover:text-text-primary transition-colors flex-shrink-0"
+                                                >
+                                                    View
+                                                </Link>
+                                            </div>
+                                        ))}
+                                    </div>
+                                )}
+                                {msg.isApiKeyError && (
+                                    <button 
+                                        onClick={() => setShowKeyForm(true)} 
+                                        className="mt-3 w-full text-left bg-amber-100 text-amber-800 font-semibold py-2 px-3 rounded-md hover:bg-amber-200 transition-colors text-sm"
+                                    >
+                                        Update API Key
+                                    </button>
+                                )}
                             </div>
                         </div>
                     ))}
@@ -135,7 +165,7 @@ const Chatbot: React.FC = () => {
     return (
         <>
             {/* Chat Window */}
-            <div className={`fixed bottom-24 right-4 sm:right-6 md:right-8 w-[90vw] max-w-sm h-[70vh] max-h-[600px] bg-surface rounded-lg shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`} role="dialog" aria-hidden={!isOpen}>
+            <div className={`fixed bottom-24 right-4 sm:right-6 md:right-8 w-[90vw] max-w-sm h-[70vh] max-h-[600px] bg-surface rounded-lg shadow-2xl flex flex-col transition-transform duration-300 ease-in-out z-50 ${isOpen ? 'translate-y-0 opacity-100' : 'translate-y-10 opacity-0 pointer-events-none'}`} role="dialog" aria-hidden={!isOpen}>
                 <header className="flex items-center justify-between p-4 bg-text-primary text-white rounded-t-lg">
                     <h3 className="text-lg font-semibold font-serif">AI Assistant</h3>
                      <div className="flex items-center space-x-2">
@@ -156,7 +186,7 @@ const Chatbot: React.FC = () => {
             {/* Floating Action Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="fixed bottom-6 right-4 sm:right-6 md:right-8 bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark transition-transform hover:scale-110"
+                className="fixed bottom-6 right-4 sm:right-6 md:right-8 bg-primary text-white p-4 rounded-full shadow-lg hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-dark transition-transform hover:scale-110 z-50"
                 aria-label="Toggle chat"
                 aria-expanded={isOpen}
             >

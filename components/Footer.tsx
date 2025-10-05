@@ -10,7 +10,7 @@ const SocialIcon: React.FC<{ href: string; children: React.ReactNode; label: str
 const Footer: React.FC = () => {
   return (
     <footer className="bg-text-primary mt-24">
-      <div className="container mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <div className="container mx-auto py-16 px-2 sm:px-4 lg:px-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10">
           {/* Column 1: Company Info & Social */}
           <div className="md:col-span-2 lg:col-span-1">
