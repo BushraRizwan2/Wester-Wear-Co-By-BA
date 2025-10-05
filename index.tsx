@@ -8,6 +8,7 @@ import { SearchProvider } from './contexts/SearchContext';
 import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ProductProvider } from './contexts/ProductContext';
+import { APIKeyProvider } from './contexts/APIKeyContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -18,19 +19,21 @@ const root = ReactDOM.createRoot(rootElement);
 root.render(
   <React.StrictMode>
     <HashRouter>
-      <AuthProvider>
-        <ToastProvider>
-          <ProductProvider>
-            <CartProvider>
-              <WishlistProvider>
-                <SearchProvider>
-                  <App />
-                </SearchProvider>
-              </WishlistProvider>
-            </CartProvider>
-          </ProductProvider>
-        </ToastProvider>
-      </AuthProvider>
+      <APIKeyProvider>
+        <AuthProvider>
+          <ToastProvider>
+            <ProductProvider>
+              <CartProvider>
+                <WishlistProvider>
+                  <SearchProvider>
+                    <App />
+                  </SearchProvider>
+                </WishlistProvider>
+              </CartProvider>
+            </ProductProvider>
+          </ToastProvider>
+        </AuthProvider>
+      </APIKeyProvider>
     </HashRouter>
   </React.StrictMode>
 );

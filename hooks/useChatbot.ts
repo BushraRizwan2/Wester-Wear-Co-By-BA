@@ -2,8 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { GoogleGenAI, Chat } from '@google/genai';
 import type { ChatMessage } from '../types';
 import { useProducts } from '../contexts/ProductContext';
-
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+import { useAPIKey } from '../contexts/APIKeyContext';
 
 export const useChatbot = () => {
     const [messages, setMessages] = useState<ChatMessage[]>([
@@ -12,9 +11,17 @@ export const useChatbot = () => {
     const [isLoading, setIsLoading] = useState(false);
     const chat = useRef<Chat | null>(null);
     const { products: allProducts } = useProducts();
+    const { apiKey } = useAPIKey();
 
-    // Initialize the chat session once and when products change
+    // Initialize the chat session when API key is available or products change
     useEffect(() => {
+        if (!apiKey) {
+            chat.current = null;
+            return;
+        }
+
+        const ai = new GoogleGenAI({ apiKey });
+
         // Create a simplified version of the product data for the AI context
         const productContext = JSON.stringify(allProducts.map(p => ({
             id: p.id,
@@ -40,7 +47,8 @@ export const useChatbot = () => {
                 systemInstruction: SYSTEM_INSTRUCTION,
             },
         });
-    }, [allProducts]);
+        
+    }, [allProducts, apiKey]);
 
     const sendMessage = async (userInput: string) => {
         if (!userInput.trim()) return;
@@ -51,7 +59,8 @@ export const useChatbot = () => {
 
         try {
             if (!chat.current) {
-                throw new Error("Chat session not initialized.");
+                // This can happen if API key is not set.
+                throw new Error("Chat session not initialized. Please set your API key.");
             }
             const response = await chat.current.sendMessage({ message: userInput });
 
@@ -60,7 +69,11 @@ export const useChatbot = () => {
 
         } catch (error) {
             console.error("Gemini API error:", error);
-            const errorMessage: ChatMessage = { sender: 'bot', text: "Sorry, I'm having a little trouble right now. Please try again in a moment." };
+            const errorMessageText = error instanceof Error && error.message.includes('API key') 
+                ? "There was an issue with your API key. Please check it and try again."
+                : "Sorry, I'm having a little trouble right now. Please try again in a moment.";
+
+            const errorMessage: ChatMessage = { sender: 'bot', text: errorMessageText };
             setMessages(prev => [...prev, errorMessage]);
         } finally {
             setIsLoading(false);
