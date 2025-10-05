@@ -29,6 +29,28 @@
         }
       }
     </script>
+    <style>
+      /* Custom scrollbar for Webkit browsers */
+      .custom-scrollbar::-webkit-scrollbar {
+        height: 8px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: #F5F1E9; /* Cream background */
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #7D6D69; /* Muted Brown */
+        border-radius: 10px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #433431; /* Dark Brown */
+      }
+      /* For Firefox */
+      .custom-scrollbar {
+        scrollbar-width: thin;
+        scrollbar-color: #7D6D69 #F5F1E9;
+      }
+    </style>
   <script type="importmap">
 {
   "imports": {

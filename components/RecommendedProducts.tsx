@@ -20,7 +20,7 @@ const RecommendedProducts: React.FC<RecommendedProductsProps> = ({ currentProduc
 
   const recommendedProducts = useMemo(() => {
     const currentProductRating = getAverageRating(currentProduct);
-    const MAX_RECOMMENDATIONS = 4;
+    const MAX_RECOMMENDATIONS = 8; // Increase for a scrollable list
 
     // 1. Find products in the same category, sort by rating similarity
     const sameCategoryProducts = allProducts
@@ -32,7 +32,7 @@ const RecommendedProducts: React.FC<RecommendedProductsProps> = ({ currentProduc
       .sort((a, b) => a.ratingDiff - b.ratingDiff)
       .map(p => p.product);
 
-    let recommendations = sameCategoryProducts.slice(0, MAX_RECOMMENDATIONS);
+    let recommendations = sameCategoryProducts;
 
     // 2. Fallback if not enough recommendations from the same category
     if (recommendations.length < MAX_RECOMMENDATIONS) {
@@ -47,7 +47,7 @@ const RecommendedProducts: React.FC<RecommendedProductsProps> = ({ currentProduc
       recommendations.push(...otherProducts.slice(0, needed));
     }
 
-    return recommendations;
+    return recommendations.slice(0, MAX_RECOMMENDATIONS);
 
   }, [currentProduct, allProducts]);
 
@@ -57,11 +57,15 @@ const RecommendedProducts: React.FC<RecommendedProductsProps> = ({ currentProduc
 
   return (
     <div className="mt-24">
-      <h2 className="text-3xl sm:text-4xl font-serif font-bold text-center mb-8">You Might Also Like</h2>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-        {recommendedProducts.map(product => (
-          <ProductCard key={product.id} product={product} />
-        ))}
+      <h2 className="text-3xl sm:text-4xl font-serif font-bold text-center mb-8">Complete The Look</h2>
+      <div className="custom-scrollbar -mx-2 sm:-mx-4 lg:-mx-6 px-2 sm:px-4 lg:px-6">
+        <div className="flex space-x-6 overflow-x-auto py-4">
+            {recommendedProducts.map(product => (
+              <div key={product.id} className="w-64 sm:w-72 flex-shrink-0">
+                <ProductCard product={product} />
+              </div>
+            ))}
+        </div>
       </div>
     </div>
   );
