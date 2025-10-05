@@ -31,7 +31,7 @@ const CartPage: React.FC = () => {
         {cart.map(item => (
           <div key={item.id} className="flex flex-col sm:flex-row items-center justify-between pb-6 border-b last:border-b-0">
             <div className="flex items-center mb-4 sm:mb-0 flex-grow pr-4">
-              <img src={item.imageUrl} alt={item.name} className="w-24 h-24 object-cover rounded-md mr-6" />
+              <img src={item.imageUrls[0]} alt={item.name} className="w-24 h-24 object-cover rounded-md mr-6" />
               <div>
                 <Link to={`/product/${item.id}`} className="text-lg font-semibold text-text-primary hover:underline">{item.name}</Link>
                 <p className="text-text-secondary">${item.price.toFixed(2)}</p>

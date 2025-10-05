@@ -109,7 +109,7 @@ const CheckoutPage: React.FC = () => {
                 {cart.map(item => (
                     <div key={item.id} className="flex justify-between items-center">
                         <div className="flex items-center">
-                            <img src={item.imageUrl} alt={item.name} className="w-16 h-16 rounded-md mr-4" />
+                            <img src={item.imageUrls[0]} alt={item.name} className="w-16 h-16 rounded-md mr-4" />
                             <div>
                                 <p className="font-semibold">{item.name}</p>
                                 <p className="text-sm text-text-secondary">Qty: {item.quantity}</p>

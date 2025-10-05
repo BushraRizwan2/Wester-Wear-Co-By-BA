@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
@@ -6,7 +7,15 @@ import { products as allProducts } from '../data/products';
 import type { Product } from '../types';
 import Breadcrumbs from '../components/Breadcrumbs';
 
-type SortOption = 'default' | 'price-asc' | 'price-desc';
+type SortOption = 'default' | 'price-asc' | 'price-desc' | 'rating-desc';
+
+const getAverageRating = (product: Product): number => {
+  if (!product.reviews || product.reviews.length === 0) {
+    return 0;
+  }
+  const totalRating = product.reviews.reduce((acc, review) => acc + review.rating, 0);
+  return totalRating / product.reviews.length;
+};
 
 const ProductListPage: React.FC = () => {
   const { categoryName } = useParams<{ categoryName: 'summer' | 'winter' }>();
@@ -33,20 +42,24 @@ const ProductListPage: React.FC = () => {
 
   const sortedProducts = useMemo(() => {
     const sortableProducts = [...products]; // Create a copy to avoid mutating state
-    if (sortBy === 'price-asc') {
-      sortableProducts.sort((a, b) => a.price - b.price);
-    } else if (sortBy === 'price-desc') {
-      sortableProducts.sort((a, b) => b.price - a.price);
+    switch (sortBy) {
+      case 'price-asc':
+        sortableProducts.sort((a, b) => a.price - b.price);
+        break;
+      case 'price-desc':
+        sortableProducts.sort((a, b) => b.price - a.price);
+        break;
+      case 'rating-desc':
+        sortableProducts.sort((a, b) => getAverageRating(b) - getAverageRating(a));
+        break;
+      default:
+        // 'default' case doesn't require sorting
+        break;
     }
     return sortableProducts;
   }, [products, sortBy]);
 
   const title = categoryName ? `${categoryName.charAt(0).toUpperCase() + categoryName.slice(1)} Collection` : 'Products';
-
-  if (loading) {
-    return <Spinner />;
-  }
-  
   const categoryTitle = categoryName ? categoryName.charAt(0).toUpperCase() + categoryName.slice(1) : 'Products';
   const crumbs = [
     { label: 'Home', path: '/' },
@@ -69,13 +82,16 @@ const ProductListPage: React.FC = () => {
               aria-label="Sort products"
             >
               <option value="default">Default</option>
+              <option value="rating-desc">Average Rating</option>
               <option value="price-asc">Price: Low to High</option>
               <option value="price-desc">Price: High to Low</option>
             </select>
         </div>
       </div>
 
-      {sortedProducts.length > 0 ? (
+      {loading ? (
+        <Spinner />
+      ) : sortedProducts.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {sortedProducts.map((product) => (
             <ProductCard key={product.id} product={product} />

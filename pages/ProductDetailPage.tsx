@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { products as allProducts } from '../data/products';
@@ -7,6 +8,10 @@ import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import Breadcrumbs from '../components/Breadcrumbs';
 import QuantityStepper from '../components/QuantityStepper';
+import ProductImageGallery from '../components/ProductImageGallery';
+import ProductReviews from '../components/ProductReviews';
+import RecommendedProducts from '../components/RecommendedProducts';
+import { useToast } from '../contexts/ToastContext';
 
 const HeartIconSolid = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" viewBox="0 0 20 20" fill="currentColor">
@@ -24,9 +29,9 @@ const ProductDetailPage: React.FC = () => {
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
   const [quantity, setQuantity] = useState(1);
-  const [addedMessage, setAddedMessage] = useState(false);
   const { addToCart } = useCart();
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { showToast } = useToast();
 
   useEffect(() => {
     setLoading(true);
@@ -35,6 +40,7 @@ const ProductDetailPage: React.FC = () => {
       const foundProduct = allProducts.find((p) => p.id === productId) || null;
       setProduct(foundProduct);
       setLoading(false);
+      window.scrollTo(0, 0); // Scroll to top on product change
     }, 500);
 
     return () => clearTimeout(timer);
@@ -43,13 +49,17 @@ const ProductDetailPage: React.FC = () => {
   const handleAddToCart = () => {
     if (product) {
       addToCart(product, quantity);
-      setAddedMessage(true);
-      setTimeout(() => setAddedMessage(false), 2000);
+      showToast(`${product.name} added to cart!`);
     }
   };
 
   if (loading) {
-    return <Spinner />;
+    // Show a centered spinner with a minimum height to avoid layout shift
+    return (
+        <div className="flex justify-center items-center" style={{ minHeight: '60vh' }}>
+            <Spinner />
+        </div>
+    );
   }
 
   if (!product) {
@@ -79,7 +89,7 @@ const ProductDetailPage: React.FC = () => {
       <div className="bg-surface p-8 rounded-lg shadow-lg">
         <div className="grid md:grid-cols-2 gap-10">
           <div>
-            <img src={product.imageUrl} alt={product.name} className="w-full h-auto object-cover rounded-lg shadow-md" />
+            <ProductImageGallery imageUrls={product.imageUrls} altText={product.name} />
           </div>
           <div>
             <h1 className="text-3xl sm:text-4xl font-serif font-bold text-text-primary">{product.name}</h1>
@@ -116,12 +126,13 @@ const ProductDetailPage: React.FC = () => {
                 {onWishlist ? <HeartIconSolid /> : <HeartIconOutline />}
               </button>
             </div>
-            {addedMessage && (
-              <p className="text-green-600 mt-4 text-center font-semibold" role="status" aria-live="polite">Added to cart!</p>
-            )}
           </div>
         </div>
+        
+        <ProductReviews initialReviews={product.reviews || []} />
       </div>
+      
+      <RecommendedProducts currentProduct={product} />
     </div>
   );
 };

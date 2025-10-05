@@ -2,6 +2,8 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import type { Product } from '../types';
 import { useWishlist } from '../contexts/WishlistContext';
+import { useCart } from '../contexts/CartContext';
+import { useToast } from '../contexts/ToastContext';
 
 // Heart Icon SVGs
 const HeartIconSolid = () => (
@@ -16,13 +18,15 @@ const HeartIconOutline = () => (
     </svg>
 );
 
-
 interface ProductCardProps {
   product: Product;
 }
 
 const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
+  const { addToCart } = useCart();
+  const { showToast } = useToast();
+
   const onWishlist = isInWishlist(product.id);
 
   const handleWishlistToggle = (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -35,32 +39,54 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     }
   };
 
+  const handleAddToCart = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    addToCart(product, 1);
+    showToast(`${product.name} added to cart!`);
+  };
+
   return (
-    <div className="group relative border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 bg-surface">
+    <div className="group relative border border-gray-200 rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300 bg-surface flex flex-col">
       <button
         onClick={handleWishlistToggle}
-        className={`absolute top-3 right-3 z-10 p-1.5 rounded-full transition-colors duration-300 ${onWishlist ? 'text-red-500 bg-white/70' : 'text-gray-400 hover:text-red-500 bg-white/50 hover:bg-white/90'}`}
+        className={`absolute top-3 right-3 z-20 p-1.5 rounded-full transition-all duration-300 ${onWishlist ? 'text-red-500 bg-white/80' : 'text-gray-400 hover:text-red-500 bg-white/50 hover:bg-white/90'}`}
         aria-label={onWishlist ? 'Remove from wishlist' : 'Add to wishlist'}
       >
         {onWishlist ? <HeartIconSolid /> : <HeartIconOutline />}
       </button>
-      <Link to={`/product/${product.id}`}>
-        <div className="w-full h-80 bg-gray-200 aspect-w-1 aspect-h-1 overflow-hidden">
-          <img
-            src={product.imageUrl}
-            alt={product.name}
-            className="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity duration-300"
-          />
+      
+      <div className="relative">
+        <Link to={`/product/${product.id}`} className="block" aria-label={`View details for ${product.name}`}>
+          <div className="w-full h-80 bg-gray-200 aspect-w-1 aspect-h-1 overflow-hidden">
+            <img
+              src={product.imageUrls[0]}
+              alt={product.name}
+              className="w-full h-full object-center object-cover group-hover:opacity-75 transition-opacity duration-300"
+            />
+          </div>
+        </Link>
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:bottom-6 z-10">
+            <button
+                onClick={handleAddToCart}
+                className="w-full bg-primary text-white font-bold py-2 px-4 rounded-md hover:bg-primary-dark transition-colors duration-300 shadow-lg"
+            >
+                Add to Cart
+            </button>
         </div>
-        <div className="p-4">
-          <h3 className="text-lg font-semibold text-text-primary">
+      </div>
+      
+      <div className="p-4 flex-grow flex flex-col">
+        <h3 className="text-lg font-semibold text-text-primary">
+          <Link to={`/product/${product.id}`} className="hover:underline focus:outline-none focus:ring-2 focus:ring-primary rounded">
+            <span aria-hidden="true" className="absolute inset-0 z-0"></span>
             {product.name}
-          </h3>
-          <p className="mt-2 text-xl font-semibold text-primary">
-            ${product.price.toFixed(2)}
-          </p>
-        </div>
-      </Link>
+          </Link>
+        </h3>
+        <p className="mt-2 text-xl font-semibold text-primary">
+          ${product.price.toFixed(2)}
+        </p>
+      </div>
     </div>
   );
 };

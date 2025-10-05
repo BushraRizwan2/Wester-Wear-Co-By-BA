@@ -12,6 +12,7 @@ import WishlistPage from './pages/WishlistPage';
 import SearchResultsPage from './pages/SearchResultsPage';
 import Chatbot from './components/Chatbot';
 import LoginPage from './pages/LoginPage';
+import ToastContainer from './components/ToastContainer';
 
 const App: React.FC = () => {
   return (
@@ -32,6 +33,7 @@ const App: React.FC = () => {
       </main>
       <Footer />
       <Chatbot />
+      <ToastContainer />
     </div>
   );
 };
