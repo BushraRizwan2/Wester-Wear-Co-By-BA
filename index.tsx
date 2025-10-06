@@ -9,6 +9,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import { ToastProvider } from './contexts/ToastContext';
 import { ProductProvider } from './contexts/ProductContext';
 import { APIKeyProvider } from './contexts/APIKeyContext';
+import { QuickViewProvider } from './contexts/QuickViewContext';
+import { EmployeeProvider } from './contexts/EmployeeContext';
+import { OrderProvider } from './contexts/OrderContext';
 
 const rootElement = document.getElementById('root');
 if (!rootElement) {
@@ -23,13 +26,19 @@ root.render(
         <AuthProvider>
           <ToastProvider>
             <ProductProvider>
-              <CartProvider>
-                <WishlistProvider>
-                  <SearchProvider>
-                    <App />
-                  </SearchProvider>
-                </WishlistProvider>
-              </CartProvider>
+              <EmployeeProvider>
+                <OrderProvider>
+                  <QuickViewProvider>
+                    <CartProvider>
+                      <WishlistProvider>
+                        <SearchProvider>
+                          <App />
+                        </SearchProvider>
+                      </WishlistProvider>
+                    </CartProvider>
+                  </QuickViewProvider>
+                </OrderProvider>
+              </EmployeeProvider>
             </ProductProvider>
           </ToastProvider>
         </AuthProvider>

@@ -18,6 +18,14 @@ import AdminLayout from './components/admin/AdminLayout';
 import ProtectedRoute from './components/admin/ProtectedRoute';
 import AdminDashboardPage from './pages/admin/AdminDashboardPage';
 import AdminProductsPage from './pages/admin/AdminProductsPage';
+import QuickViewModal from './components/QuickViewModal';
+import AdminEmployeesPage from './pages/admin/AdminEmployeesPage';
+import AdminAttendancePage from './pages/admin/AdminAttendancePage';
+import AdminInventoryPage from './pages/admin/AdminInventoryPage';
+import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
+import AdminPayrollPage from './pages/admin/AdminPayrollPage';
+import AdminSettingsPage from './pages/admin/AdminSettingsPage';
+import OrderHistoryPage from './pages/OrderHistoryPage';
 
 const SiteLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="flex flex-col min-h-screen">
@@ -28,21 +36,28 @@ const SiteLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
     <Footer />
     <Chatbot />
     <ToastContainer />
+    <QuickViewModal />
   </div>
 );
 
 const App: React.FC = () => {
   const location = useLocation();
   const isAdminRoute = location.pathname.startsWith('/admin');
+  const isAdminLoginPage = location.pathname === '/admin';
 
-  if (isAdminRoute) {
+  if (isAdminRoute && !isAdminLoginPage) {
     return (
        <>
         <Routes>
-          <Route path="/admin" element={<AdminLoginPage />} />
           <Route element={<ProtectedRoute />}>
              <Route path="/admin/dashboard" element={<AdminLayout><AdminDashboardPage /></AdminLayout>} />
              <Route path="/admin/products" element={<AdminLayout><AdminProductsPage /></AdminLayout>} />
+             <Route path="/admin/employees" element={<AdminLayout><AdminEmployeesPage /></AdminLayout>} />
+             <Route path="/admin/attendance" element={<AdminLayout><AdminAttendancePage /></AdminLayout>} />
+             <Route path="/admin/inventory" element={<AdminLayout><AdminInventoryPage /></AdminLayout>} />
+             <Route path="/admin/analytics" element={<AdminLayout><AdminAnalyticsPage /></AdminLayout>} />
+             <Route path="/admin/payroll" element={<AdminLayout><AdminPayrollPage /></AdminLayout>} />
+             <Route path="/admin/settings" element={<AdminLayout><AdminSettingsPage /></AdminLayout>} />
           </Route>
         </Routes>
         <ToastContainer />
@@ -62,6 +77,8 @@ const App: React.FC = () => {
         <Route path="/wishlist" element={<WishlistPage />} />
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/admin" element={<AdminLoginPage />} />
+        <Route path="/order-history" element={<OrderHistoryPage />} />
       </Routes>
     </SiteLayout>
   );

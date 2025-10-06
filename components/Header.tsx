@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
@@ -55,13 +55,25 @@ const Header: React.FC = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
 
+  // Prevent body from scrolling when mobile menu is open
+  useEffect(() => {
+    if (isMobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    // Cleanup on component unmount
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isMobileMenuOpen]);
+
+
   const activeLinkClass = 'text-primary border-b-2 border-primary font-semibold';
   const inactiveLinkClass = 'text-text-secondary hover:text-primary transition-colors duration-300';
   
   const mobileLinkClass = ({ isActive }: { isActive: boolean }) =>
-    isActive
-      ? 'bg-primary text-white block px-3 py-2 rounded-md text-base font-medium'
-      : 'text-text-secondary hover:bg-gray-100 hover:text-primary block px-3 py-2 rounded-md text-base font-medium';
+    `flex items-center justify-between w-full rounded-md px-3 py-2 text-base font-medium ${isActive ? 'bg-primary text-white' : 'text-text-secondary hover:bg-gray-100 hover:text-primary'}`;
   
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -77,6 +89,7 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     logout();
     navigate('/');
+    handleMobileLinkClick();
   };
   
   const handleMobileLinkClick = () => {
@@ -84,134 +97,186 @@ const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-surface shadow-md fixed top-0 left-0 right-0 z-50">
-      <nav className="container mx-auto px-2 sm:px-4 lg:px-6">
-        <div className="flex items-center justify-between h-20">
-          <div className="flex items-center">
-            <div className="flex-shrink-0">
-              <NavLink to="/" className="text-2xl sm:text-3xl font-serif text-primary font-bold">
-                Western Wear Co.
-              </NavLink>
+    <>
+      <header className="bg-surface shadow-md fixed top-0 left-0 right-0 z-50">
+        <nav className="container mx-auto px-2 sm:px-4 lg:px-6">
+          <div className="flex items-center h-20">
+            <div className="flex items-center flex-shrink-0">
+              <div className="flex-shrink-0">
+                <NavLink to="/" className="text-2xl sm:text-3xl font-serif text-primary font-bold">
+                  Western Wear Co.
+                </NavLink>
+              </div>
+              <div className="hidden md:block">
+                <div className="ml-10 flex items-baseline space-x-8">
+                  <NavLink to="/" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
+                    Home
+                  </NavLink>
+                  <NavLink to="/category/summer" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
+                    Summer
+                  </NavLink>
+                  <NavLink to="/category/winter" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
+                    Winter
+                  </NavLink>
+                </div>
+              </div>
             </div>
-            <div className="hidden md:block">
-              <div className="ml-10 flex items-baseline space-x-8">
-                <NavLink to="/" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
-                  Home
+            
+            <div className="flex items-center ml-auto">
+              <div className="flex items-center space-x-4">
+                {/* Search Bar */}
+                <form onSubmit={handleSearchSubmit} className="relative hidden md:block">
+                    <input
+                        id="search"
+                        name="search"
+                        className="block w-32 md:w-48 pl-3 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-text-secondary focus:outline-none focus:placeholder-gray-500 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-width duration-300 ease-in-out focus:w-48 md:focus:w-64"
+                        placeholder="Search..."
+                        type="search"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        aria-label="Search products"
+                    />
+                    <button type="submit" className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-secondary hover:text-primary" aria-label="Submit search">
+                        <SearchIcon />
+                    </button>
+                </form>
+
+                {/* Auth Links */}
+                {isAuthenticated ? (
+                    <>
+                        <NavLink to="/order-history" className={`${inactiveLinkClass} hidden md:block`}>
+                            My Orders
+                        </NavLink>
+                        <button onClick={handleLogout} className={`${inactiveLinkClass} hidden md:block`}>
+                            Logout
+                        </button>
+                        <button onClick={handleLogout} className={`${inactiveLinkClass} md:hidden`} aria-label="Logout">
+                            <LogoutIcon />
+                        </button>
+                    </>
+                ) : (
+                    <>
+                        <NavLink to="/login" className={`${inactiveLinkClass} hidden md:block`}>
+                            Login
+                        </NavLink>
+                        <NavLink to="/login" className={`${inactiveLinkClass} md:hidden`} aria-label="Login">
+                            <UserIcon />
+                        </NavLink>
+                    </>
+                )}
+
+                <NavLink to="/wishlist" className="relative text-text-secondary hover:text-primary transition-colors duration-300" aria-label={`View your wishlist, ${wishlistCount} items`}>
+                    <HeartIcon />
+                    {wishlistCount > 0 && (
+                        <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                            {wishlistCount}
+                        </span>
+                    )}
                 </NavLink>
-                <NavLink to="/category/summer" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
-                  Summer
+                <NavLink to="/cart" className="relative text-text-secondary hover:text-primary transition-colors duration-300" aria-label={`View your shopping cart, ${itemCount} items`}>
+                  <ShoppingBagIcon />
+                  {itemCount > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {itemCount}
+                    </span>
+                  )}
                 </NavLink>
-                <NavLink to="/category/winter" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
-                  Winter
-                </NavLink>
+              </div>
+              
+              {/* Hamburger Button */}
+              <div className="md:hidden ml-3">
+                <button
+                  onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+                  type="button"
+                  className="relative z-50 inline-flex items-center justify-center p-2 rounded-md text-text-secondary hover:text-primary focus:outline-none"
+                  aria-controls="mobile-menu"
+                  aria-expanded={isMobileMenuOpen}
+                >
+                  <span className="sr-only">Open main menu</span>
+                  {isMobileMenuOpen ? <XIcon /> : <MenuIcon />}
+                </button>
               </div>
             </div>
           </div>
-          
-          <div className="flex items-center">
-            <div className="flex items-center space-x-4">
-              {/* Search Bar - Changed to md:block */}
-              <form onSubmit={handleSearchSubmit} className="relative hidden md:block">
+        </nav>
+      </header>
+      
+      {/* --- Mobile Menu --- */}
+      {/* Overlay */}
+      <div
+        role="button"
+        tabIndex={-1}
+        aria-label="Close menu"
+        onClick={() => setIsMobileMenuOpen(false)}
+        className={`fixed inset-0 bg-black z-30 transition-opacity duration-300 ease-in-out md:hidden ${
+          isMobileMenuOpen ? 'bg-opacity-60' : 'bg-opacity-0 pointer-events-none'
+        }`}
+      />
+
+      {/* Panel */}
+      <div
+        id="mobile-menu"
+        className={`fixed top-0 right-0 h-full w-4/5 max-w-sm bg-surface shadow-xl z-40 transition-transform duration-300 ease-in-out md:hidden flex flex-col ${
+          isMobileMenuOpen ? 'translate-x-0' : 'translate-x-full'
+        }`}
+        aria-hidden={!isMobileMenuOpen}
+        role="dialog"
+        aria-modal="true"
+      >
+        <div className="flex-1 overflow-y-auto pt-20"> {/* pt-20 to account for header height */}
+           <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+              <NavLink to="/" className={mobileLinkClass} onClick={handleMobileLinkClick}>Home</NavLink>
+              <NavLink to="/category/summer" className={mobileLinkClass} onClick={handleMobileLinkClick}>Summer</NavLink>
+              <NavLink to="/category/winter" className={mobileLinkClass} onClick={handleMobileLinkClick}>Winter</NavLink>
+          </div>
+          {/* User Account Links */}
+          <div className="pt-4 pb-3 border-t border-gray-200">
+              <div className="px-2 space-y-1">
+                 <NavLink to="/wishlist" className={mobileLinkClass} onClick={handleMobileLinkClick}>
+                    <span>Wishlist</span>
+                    {wishlistCount > 0 && <span className="bg-accent text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{wishlistCount}</span>}
+                 </NavLink>
+                 <NavLink to="/cart" className={mobileLinkClass} onClick={handleMobileLinkClick}>
+                    <span>Cart</span>
+                    {itemCount > 0 && <span className="bg-accent text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">{itemCount}</span>}
+                 </NavLink>
+                 {isAuthenticated ? (
+                    <>
+                        <NavLink to="/order-history" className={mobileLinkClass} onClick={handleMobileLinkClick}>
+                            Order History
+                        </NavLink>
+                        <button onClick={handleLogout} className={mobileLinkClass({isActive: false})}>
+                            Logout
+                        </button>
+                    </>
+                 ) : (
+                    <NavLink to="/login" className={mobileLinkClass} onClick={handleMobileLinkClick}>
+                        Login
+                    </NavLink>
+                 )}
+              </div>
+          </div>
+          {/* Mobile Search */}
+          <div className="pt-4 pb-3 border-t border-gray-200">
+              <form onSubmit={handleSearchSubmit} className="relative px-2">
                   <input
-                      id="search"
+                      id="search-mobile"
                       name="search"
-                      className="block w-32 md:w-48 pl-3 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-text-secondary focus:outline-none focus:placeholder-gray-500 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition-width duration-300 ease-in-out focus:w-48 md:focus:w-64"
+                      className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-text-secondary focus:outline-none focus:placeholder-gray-500 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
                       placeholder="Search..."
                       type="search"
                       value={query}
                       onChange={(e) => setQuery(e.target.value)}
                       aria-label="Search products"
                   />
-                  <button type="submit" className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-secondary hover:text-primary" aria-label="Submit search">
+                  <button type="submit" className="absolute inset-y-0 right-0 pr-5 flex items-center text-text-secondary hover:text-primary" aria-label="Submit search">
                       <SearchIcon />
                   </button>
               </form>
-
-              {/* Auth Links - Changed to md breakpoint */}
-              {isAuthenticated ? (
-                  <>
-                      <button onClick={handleLogout} className={`${inactiveLinkClass} hidden md:block`}>
-                          Logout
-                      </button>
-                      <button onClick={handleLogout} className={`${inactiveLinkClass} md:hidden`} aria-label="Logout">
-                          <LogoutIcon />
-                      </button>
-                  </>
-              ) : (
-                  <>
-                      <NavLink to="/login" className={`${inactiveLinkClass} hidden md:block`}>
-                          Login
-                      </NavLink>
-                      <NavLink to="/login" className={`${inactiveLinkClass} md:hidden`} aria-label="Login">
-                          <UserIcon />
-                      </NavLink>
-                  </>
-              )}
-
-               <NavLink to="/wishlist" className="relative text-text-secondary hover:text-primary transition-colors duration-300" aria-label={`View your wishlist, ${wishlistCount} items`}>
-                  <HeartIcon />
-                  {wishlistCount > 0 && (
-                      <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                          {wishlistCount}
-                      </span>
-                  )}
-              </NavLink>
-              <NavLink to="/cart" className="relative text-text-secondary hover:text-primary transition-colors duration-300" aria-label={`View your shopping cart, ${itemCount} items`}>
-                <ShoppingBagIcon />
-                {itemCount > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-accent text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {itemCount}
-                  </span>
-                )}
-              </NavLink>
-            </div>
-            
-            {/* Hamburger Button */}
-            <div className="md:hidden ml-3">
-              <button
-                onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-                type="button"
-                className="inline-flex items-center justify-center p-2 rounded-md text-text-secondary hover:text-primary focus:outline-none"
-                aria-controls="mobile-menu"
-                aria-expanded={isMobileMenuOpen}
-              >
-                <span className="sr-only">Open main menu</span>
-                {isMobileMenuOpen ? <XIcon /> : <MenuIcon />}
-              </button>
-            </div>
           </div>
         </div>
-        
-        {/* Mobile Menu */}
-        {isMobileMenuOpen && (
-            <div className="md:hidden" id="mobile-menu">
-                <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-                    <NavLink to="/" className={mobileLinkClass} onClick={handleMobileLinkClick}>Home</NavLink>
-                    <NavLink to="/category/summer" className={mobileLinkClass} onClick={handleMobileLinkClick}>Summer</NavLink>
-                    <NavLink to="/category/winter" className={mobileLinkClass} onClick={handleMobileLinkClick}>Winter</NavLink>
-                </div>
-                {/* Mobile Search */}
-                <div className="pt-4 pb-3 border-t border-gray-200">
-                    <form onSubmit={handleSearchSubmit} className="relative px-2">
-                        <input
-                            id="search-mobile"
-                            name="search"
-                            className="block w-full pl-3 pr-10 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-text-secondary focus:outline-none focus:placeholder-gray-500 focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm"
-                            placeholder="Search..."
-                            type="search"
-                            value={query}
-                            onChange={(e) => setQuery(e.target.value)}
-                            aria-label="Search products"
-                        />
-                        <button type="submit" className="absolute inset-y-0 right-0 pr-5 flex items-center text-text-secondary hover:text-primary" aria-label="Submit search">
-                            <SearchIcon />
-                        </button>
-                    </form>
-                </div>
-            </div>
-        )}
-      </nav>
-    </header>
+      </div>
+    </>
   );
 };
 

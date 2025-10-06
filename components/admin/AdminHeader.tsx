@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../contexts/AuthContext';
 
 const LogoutIcon = () => (
@@ -20,9 +20,9 @@ const AdminHeader: React.FC = () => {
 
   return (
     <header className="flex items-center justify-between p-4 bg-surface shadow-md z-10">
-      <div className="text-text-primary font-semibold">
+      <Link to="/" className="text-text-primary font-semibold hover:text-primary transition-colors">
         Welcome, Admin!
-      </div>
+      </Link>
       <button
         onClick={handleLogout}
         className="flex items-center bg-accent text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-300"

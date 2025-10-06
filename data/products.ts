@@ -14,6 +14,7 @@ export const products: Product[] = [
       'https://picsum.photos/id/1027/800/800'
     ],
     category: 'summer',
+    stock: 50,
     reviews: [
       {
         id: 'R001',
@@ -43,6 +44,7 @@ export const products: Product[] = [
       'https://picsum.photos/id/1082/800/800',
     ],
     category: 'summer',
+    stock: 25,
   },
   {
     id: 'S003',
@@ -52,6 +54,7 @@ export const products: Product[] = [
     details: ['Genuine leather upper', 'Rubber sole for durability', 'Artisan crafted', 'Available in three colors'],
     imageUrls: ['https://picsum.photos/id/219/800/800'],
     category: 'summer',
+    stock: 80,
   },
   {
     id: 'S004',
@@ -61,6 +64,7 @@ export const products: Product[] = [
     details: ['Full-grain leather', 'Authentic turquoise stone', 'Fits 1.5" belt loops', 'Made in the USA'],
     imageUrls: ['https://picsum.photos/id/56/800/800'],
     category: 'summer',
+    stock: 15,
   },
   {
     id: 'W001',
@@ -74,6 +78,7 @@ export const products: Product[] = [
       'https://picsum.photos/id/1064/800/800',
     ],
     category: 'winter',
+    stock: 40,
   },
   {
     id: 'W002',
@@ -83,6 +88,7 @@ export const products: Product[] = [
     details: ['82% pure virgin wool / 18% cotton', 'Iconic Southwestern pattern', 'Fringed edges', 'Dry clean only'],
     imageUrls: ['https://picsum.photos/id/312/800/800'],
     category: 'winter',
+    stock: 5,
   },
   {
     id: 'W003',
@@ -95,6 +101,7 @@ export const products: Product[] = [
         'https://picsum.photos/id/49/800/800',
     ],
     category: 'winter',
+    stock: 30,
     reviews: [
       {
         id: 'R003',
@@ -127,5 +134,6 @@ export const products: Product[] = [
     details: ['100% Wool felt', '4" brim for sun protection', 'Leather sweatband', 'Satin lining'],
     imageUrls: ['https://picsum.photos/id/211/800/800'],
     category: 'winter',
+    stock: 0,
   },
 ];

@@ -8,6 +8,7 @@ interface Crumb {
 
 interface BreadcrumbsProps {
   crumbs: Crumb[];
+  className?: string;
 }
 
 const ChevronRightIcon = () => (
@@ -15,9 +16,9 @@ const ChevronRightIcon = () => (
 );
 
 
-const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ crumbs }) => {
+const Breadcrumbs: React.FC<BreadcrumbsProps> = ({ crumbs, className = 'mt-6 mb-6' }) => {
   return (
-    <nav className="flex mb-6" aria-label="Breadcrumb">
+    <nav className={`flex ${className}`} aria-label="Breadcrumb">
       <ol className="inline-flex items-center space-x-1 md:space-x-2">
         {crumbs.map((crumb, index) => (
           <li key={index} className="inline-flex items-center">

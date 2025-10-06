@@ -4,6 +4,7 @@ import type { Product } from '../types';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useCart } from '../contexts/CartContext';
 import { useToast } from '../contexts/ToastContext';
+import { useQuickView } from '../contexts/QuickViewContext';
 
 // Heart Icon SVGs
 const HeartIconSolid = () => (
@@ -26,6 +27,7 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToWishlist, removeFromWishlist, isInWishlist } = useWishlist();
   const { addToCart } = useCart();
   const { showToast } = useToast();
+  const { openQuickView } = useQuickView();
 
   const onWishlist = isInWishlist(product.id);
 
@@ -44,6 +46,12 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.stopPropagation();
     addToCart(product, 1);
     showToast(`${product.name} added to cart!`);
+  };
+
+  const handleQuickView = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    openQuickView(product);
   };
 
   return (
@@ -66,7 +74,13 @@ const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             />
           </div>
         </Link>
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:bottom-6 z-10">
+        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 w-[calc(100%-2rem)] opacity-0 group-hover:opacity-100 transition-all duration-300 ease-in-out group-hover:bottom-6 z-10 space-y-2">
+            <button
+                onClick={handleQuickView}
+                className="w-full bg-white text-text-primary font-bold py-2 px-4 rounded-md hover:bg-gray-100 transition-colors duration-300 shadow-lg"
+            >
+                Quick View
+            </button>
             <button
                 onClick={handleAddToCart}
                 className="w-full bg-primary text-white font-bold py-2 px-4 rounded-md hover:bg-primary-dark transition-colors duration-300 shadow-lg"

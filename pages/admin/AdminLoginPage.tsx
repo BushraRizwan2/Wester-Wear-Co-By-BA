@@ -21,7 +21,7 @@ const AdminLoginPage: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-background">
+    <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="w-full max-w-md p-8 space-y-6 bg-surface rounded-lg shadow-xl">
         <div className="text-center">
             <h1 className="text-3xl font-serif text-primary font-bold">Western Wear Co.</h1>
@@ -81,7 +81,7 @@ const AdminLoginPage: React.FC = () => {
           </div>
         </form>
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -33,14 +33,15 @@ const Footer: React.FC = () => {
             </div>
           </div>
           
-          {/* Column 2: Company Links */}
+          {/* Column 2: Shop Links */}
           <div>
-            <h4 className="font-semibold tracking-wider uppercase text-gray-200">Company</h4>
+            <h4 className="font-semibold tracking-wider uppercase text-gray-200">Shop</h4>
             <ul className="mt-4 space-y-3">
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">About Us</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Blog</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Careers</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Press</a></li>
+              <li><Link to="/" className="text-gray-300 hover:text-white transition-colors duration-300">Home</Link></li>
+              <li><Link to="/category/summer" className="text-gray-300 hover:text-white transition-colors duration-300">Summer Collection</Link></li>
+              <li><Link to="/category/winter" className="text-gray-300 hover:text-white transition-colors duration-300">Winter Collection</Link></li>
+              <li><Link to="/wishlist" className="text-gray-300 hover:text-white transition-colors duration-300">My Wishlist</Link></li>
+              <li><Link to="/cart" className="text-gray-300 hover:text-white transition-colors duration-300">Shopping Cart</Link></li>
             </ul>
           </div>
           

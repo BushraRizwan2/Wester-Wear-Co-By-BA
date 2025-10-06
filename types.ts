@@ -24,6 +24,7 @@ export interface Product {
   imageUrls: string[];
   category: 'summer' | 'winter';
   reviews?: Review[];
+  stock: number;
 }
 
 export interface CartItem extends Product {
@@ -35,4 +36,37 @@ export interface ChatMessage {
   text: string;
   isApiKeyError?: boolean;
   products?: Product[];
+}
+
+export type EmployeeStatus = 'active' | 'on-leave' | 'terminated';
+
+export interface Employee {
+  id: string;
+  name: string;
+  email: string;
+  position: string;
+  startDate: string; // ISO date string
+  status: EmployeeStatus;
+  hourlyRate: number;
+}
+
+export interface AttendanceRecord {
+  id: string;
+  employeeId: string;
+  clockIn: string;  // ISO date string
+  clockOut: string | null; // ISO date string
+}
+
+export interface OrderItem {
+  productId: string;
+  productName: string;
+  quantity: number;
+  price: number; // Price at the time of purchase
+}
+
+export interface Order {
+  id: string;
+  date: string; // ISO date string
+  items: OrderItem[];
+  total: number;
 }
