@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate, Link } from 'react-router-dom';
 import { useCart } from '../contexts/CartContext';
 import { useWishlist } from '../contexts/WishlistContext';
 import { useSearch } from '../contexts/SearchContext';
 import { useAuth } from '../contexts/AuthContext';
+import { useProducts } from '../contexts/ProductContext';
 
 const ShoppingBagIcon = () => (
   <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
@@ -46,14 +47,42 @@ const XIcon = () => (
     </svg>
 );
 
+// Helper component for highlighting matching text in suggestions
+const HighlightMatch: React.FC<{ text: string; match: string }> = ({ text, match }) => {
+    if (!match) return <>{text}</>;
+    const parts = text.split(new RegExp(`(${match})`, 'gi'));
+    return (
+        <span>
+            {parts.map((part, i) =>
+                part.toLowerCase() === match.toLowerCase() ? (
+                    <strong key={i} className="font-bold">{part}</strong>
+                ) : (
+                    part
+                )
+            )}
+        </span>
+    );
+};
+
+type Suggestion = {
+    type: 'product' | 'category';
+    label: string;
+    path: string;
+    match: string;
+};
+
 const Header: React.FC = () => {
   const { itemCount } = useCart();
   const { wishlistCount } = useWishlist();
   const { performSearch } = useSearch();
   const { isAuthenticated, logout } = useAuth();
+  const { products } = useProducts();
   const [query, setQuery] = useState('');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const [suggestions, setSuggestions] = useState<Suggestion[]>([]);
+  const [isSuggestionsOpen, setIsSuggestionsOpen] = useState(false);
+
 
   // Prevent body from scrolling when mobile menu is open
   useEffect(() => {
@@ -82,9 +111,52 @@ const Header: React.FC = () => {
         performSearch(trimmedQuery);
         navigate(`/search?q=${encodeURIComponent(trimmedQuery)}`);
         setQuery('');
+        setIsSuggestionsOpen(false);
         setIsMobileMenuOpen(false); // Close menu after mobile search
     }
   };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newQuery = e.target.value;
+    setQuery(newQuery);
+
+    if (newQuery.trim().length < 2) {
+        setSuggestions([]);
+        setIsSuggestionsOpen(false);
+        return;
+    }
+
+    const lowerCaseQuery = newQuery.toLowerCase();
+    
+    const productMatches = products
+        .filter(p => p.name.toLowerCase().includes(lowerCaseQuery))
+        .slice(0, 5)
+        .map(p => ({
+            type: 'product' as const,
+            label: p.name,
+            path: `/product/${p.id}`,
+            match: newQuery
+        }));
+
+    const categoryMatches = ['Summer', 'Winter']
+        .filter(c => c.toLowerCase().includes(lowerCaseQuery))
+        .map(c => ({
+            type: 'category' as const,
+            label: `${c} Collection`,
+            path: `/category/${c.toLowerCase()}`,
+            match: newQuery
+        }));
+
+    const combinedSuggestions = [...productMatches, ...categoryMatches].slice(0, 7);
+    setSuggestions(combinedSuggestions);
+    setIsSuggestionsOpen(combinedSuggestions.length > 0);
+  };
+
+  const handleSuggestionClick = () => {
+    setIsSuggestionsOpen(false);
+    setQuery('');
+  };
+
 
   const handleLogout = () => {
     logout();
@@ -109,9 +181,6 @@ const Header: React.FC = () => {
               </div>
               <div className="hidden md:block">
                 <div className="ml-10 flex items-baseline space-x-8">
-                  <NavLink to="/" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
-                    Home
-                  </NavLink>
                   <NavLink to="/category/summer" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
                     Summer
                   </NavLink>
@@ -133,12 +202,37 @@ const Header: React.FC = () => {
                         placeholder="Search..."
                         type="search"
                         value={query}
-                        onChange={(e) => setQuery(e.target.value)}
+                        onChange={handleSearchChange}
+                        onFocus={() => { if (suggestions.length > 0) setIsSuggestionsOpen(true); }}
+                        onBlur={() => setTimeout(() => setIsSuggestionsOpen(false), 200)}
                         aria-label="Search products"
+                        autoComplete="off"
                     />
                     <button type="submit" className="absolute inset-y-0 right-0 pr-3 flex items-center text-text-secondary hover:text-primary" aria-label="Submit search">
                         <SearchIcon />
                     </button>
+                    {isSuggestionsOpen && suggestions.length > 0 && (
+                        <div className="absolute top-full mt-2 w-full md:w-96 bg-surface rounded-md shadow-lg border z-10">
+                            <ul className="py-1 max-h-96 overflow-y-auto">
+                                {suggestions.map((suggestion, index) => (
+                                    <li key={`${suggestion.type}-${index}`}>
+                                        <Link
+                                            to={suggestion.path}
+                                            onClick={handleSuggestionClick}
+                                            className="flex items-center justify-between px-4 py-2 text-sm text-text-primary hover:bg-gray-100"
+                                        >
+                                            <span className="truncate">
+                                                <HighlightMatch text={suggestion.label} match={suggestion.match} />
+                                            </span>
+                                            <span className="text-xs uppercase font-semibold text-text-secondary bg-gray-200 px-2 py-0.5 rounded flex-shrink-0 ml-2">
+                                                {suggestion.type}
+                                            </span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
                 </form>
 
                 {/* Auth Links */}
@@ -225,7 +319,6 @@ const Header: React.FC = () => {
       >
         <div className="flex-1 overflow-y-auto pt-20"> {/* pt-20 to account for header height */}
            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <NavLink to="/" className={mobileLinkClass} onClick={handleMobileLinkClick}>Home</NavLink>
               <NavLink to="/category/summer" className={mobileLinkClass} onClick={handleMobileLinkClick}>Summer</NavLink>
               <NavLink to="/category/winter" className={mobileLinkClass} onClick={handleMobileLinkClick}>Winter</NavLink>
           </div>
@@ -266,12 +359,40 @@ const Header: React.FC = () => {
                       placeholder="Search..."
                       type="search"
                       value={query}
-                      onChange={(e) => setQuery(e.target.value)}
+                      onChange={handleSearchChange}
+                      onFocus={() => { if (suggestions.length > 0) setIsSuggestionsOpen(true); }}
+                      onBlur={() => setTimeout(() => setIsSuggestionsOpen(false), 200)}
                       aria-label="Search products"
+                      autoComplete="off"
                   />
                   <button type="submit" className="absolute inset-y-0 right-0 pr-5 flex items-center text-text-secondary hover:text-primary" aria-label="Submit search">
                       <SearchIcon />
                   </button>
+                   {isSuggestionsOpen && suggestions.length > 0 && (
+                        <div className="absolute top-full mt-2 w-[calc(100%-1rem)] bg-surface rounded-md shadow-lg border z-20">
+                            <ul className="py-1 max-h-48 overflow-y-auto">
+                                {suggestions.map((suggestion, index) => (
+                                    <li key={`mobile-${suggestion.type}-${index}`}>
+                                        <Link
+                                            to={suggestion.path}
+                                            onClick={() => {
+                                                handleSuggestionClick();
+                                                setIsMobileMenuOpen(false);
+                                            }}
+                                            className="flex items-center justify-between px-4 py-2 text-sm text-text-primary hover:bg-gray-100"
+                                        >
+                                            <span className="truncate">
+                                                <HighlightMatch text={suggestion.label} match={suggestion.match} />
+                                            </span>
+                                            <span className="text-xs uppercase font-semibold text-text-secondary bg-gray-200 px-2 py-0.5 rounded flex-shrink-0 ml-2">
+                                                {suggestion.type}
+                                            </span>
+                                        </Link>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    )}
               </form>
           </div>
         </div>
