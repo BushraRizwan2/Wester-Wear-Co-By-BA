@@ -3,6 +3,8 @@ import { useProducts } from '../../contexts/ProductContext';
 import { Product } from '../../types';
 import ProductFormModal from '../../components/admin/ProductFormModal';
 import { useToast } from '../../contexts/ToastContext';
+import { useCart } from '../../contexts/CartContext';
+import { useWishlist } from '../../contexts/WishlistContext';
 
 const TrashIcon = () => (
     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -18,6 +20,8 @@ const PencilIcon = () => (
 
 const AdminProductsPage: React.FC = () => {
   const { products, deleteProduct } = useProducts();
+  const { removeFromCart } = useCart();
+  const { removeFromWishlist } = useWishlist();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProduct, setEditingProduct] = useState<Product | null>(null);
   const { showToast } = useToast();
@@ -34,7 +38,13 @@ const AdminProductsPage: React.FC = () => {
 
   const handleDelete = (productId: string) => {
     if (window.confirm('Are you sure you want to delete this product?')) {
+      // First, remove from global product state
       deleteProduct(productId);
+      
+      // Then, remove from any user-specific states to maintain data consistency
+      removeFromCart(productId);
+      removeFromWishlist(productId);
+
       showToast('Product deleted successfully!', 'success');
     }
   };

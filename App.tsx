@@ -26,6 +26,7 @@ import AdminAnalyticsPage from './pages/admin/AdminAnalyticsPage';
 import AdminPayrollPage from './pages/admin/AdminPayrollPage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
+import SizeGuidePage from './pages/SizeGuidePage';
 
 const SiteLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="flex flex-col min-h-screen">
@@ -79,6 +80,7 @@ const App: React.FC = () => {
         <Route path="/login" element={<LoginPage />} />
         <Route path="/admin" element={<AdminLoginPage />} />
         <Route path="/order-history" element={<OrderHistoryPage />} />
+        <Route path="/size-guide" element={<SizeGuidePage />} />
       </Routes>
     </SiteLayout>
   );

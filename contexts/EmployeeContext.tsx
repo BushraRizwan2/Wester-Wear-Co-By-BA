@@ -40,6 +40,8 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
   const deleteEmployee = (employeeId: string) => {
     setEmployees(prev => prev.filter(e => e.id !== employeeId));
+    // Also remove associated attendance records for data integrity
+    setAttendanceRecords(prev => prev.filter(rec => rec.employeeId !== employeeId));
   };
   
   const getAttendanceForDate = (date: Date): (AttendanceRecord & { employeeName: string })[] => {

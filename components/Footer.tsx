@@ -66,7 +66,7 @@ const Footer: React.FC = () => {
             <ul className="mt-4 space-y-3">
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Help & FAQ</a></li>
               <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Shipping & Returns</a></li>
-              <li><a href="#" className="text-gray-300 hover:text-white transition-colors duration-300">Size Guide</a></li>
+              <li><Link to="/size-guide" className="text-gray-300 hover:text-white transition-colors duration-300">Size Guide</Link></li>
               <li><Link to="/admin" className="text-gray-300 hover:text-white transition-colors duration-300">Admin Portal</Link></li>
             </ul>
           </div>
