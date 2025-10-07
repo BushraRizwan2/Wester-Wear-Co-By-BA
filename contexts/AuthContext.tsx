@@ -4,6 +4,7 @@ interface AuthContextType {
   isAuthenticated: boolean;
   isAdmin: boolean;
   login: () => void;
+  signup: () => void;
   loginAdmin: (user: string, pass: string) => boolean;
   logout: () => void;
 }
@@ -16,6 +17,13 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
 
   const login = () => {
     // In a real app, this would involve token handling, etc.
+    setIsAuthenticated(true);
+    setIsAdmin(false);
+  };
+
+  const signup = () => {
+    // For this demo, signup will automatically log the user in.
+    // In a real app, this would create a user record.
     setIsAuthenticated(true);
     setIsAdmin(false);
   };
@@ -36,7 +44,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, loginAdmin, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, isAdmin, login, signup, loginAdmin, logout }}>
       {children}
     </AuthContext.Provider>
   );

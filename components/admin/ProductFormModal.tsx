@@ -15,7 +15,7 @@ const initialFormState = {
   description: '',
   details: [''],
   imageUrls: [],
-  category: 'summer' as 'summer' | 'winter',
+  category: 'clothing' as 'clothing' | 'fragrance' | 'jewelry' | 'accessories',
   stock: '0',
 };
 
@@ -65,10 +65,8 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ isOpen, onClose, pr
   };
 
   const removeDetailItem = (index: number) => {
-    if (formState.details.length > 1) {
-        const newDetails = formState.details.filter((_, i) => i !== index);
-        setFormState(prev => ({ ...prev, details: newDetails }));
-    }
+    const newDetails = formState.details.filter((_, i) => i !== index);
+    setFormState(prev => ({ ...prev, details: newDetails }));
   };
 
   const handleFiles = (files: FileList) => {
@@ -178,8 +176,10 @@ const ProductFormModal: React.FC<ProductFormModalProps> = ({ isOpen, onClose, pr
                 <div>
                     <label htmlFor="category" className="block text-sm font-medium">Category</label>
                     <select name="category" id="category" value={formState.category} onChange={handleChange} className="mt-1 block w-full rounded-md border-gray-300 shadow-sm p-2 bg-white">
-                        <option value="summer">Summer</option>
-                        <option value="winter">Winter</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="fragrance">Fragrance</option>
+                        <option value="jewelry">Jewelry</option>
+                        <option value="accessories">Accessories</option>
                     </select>
                 </div>
                  <div>

@@ -27,9 +27,14 @@ import AdminPayrollPage from './pages/admin/AdminPayrollPage';
 import AdminSettingsPage from './pages/admin/AdminSettingsPage';
 import OrderHistoryPage from './pages/OrderHistoryPage';
 import SizeGuidePage from './pages/SizeGuidePage';
+import SharedWishlistPage from './pages/SharedWishlistPage';
+import ScrollToTop from './components/ScrollToTop';
+import SignupPage from './pages/SignupPage';
+import ForgotPasswordPage from './pages/ForgotPasswordPage';
 
 const SiteLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => (
   <div className="flex flex-col min-h-screen">
+    <ScrollToTop />
     <Header />
     <main className="flex-grow container mx-auto px-2 sm:px-4 lg:px-6 pt-20 pb-8">
       {children}
@@ -76,8 +81,11 @@ const App: React.FC = () => {
         <Route path="/checkout" element={<CheckoutPage />} />
         <Route path="/confirmation" element={<OrderConfirmationPage />} />
         <Route path="/wishlist" element={<WishlistPage />} />
+        <Route path="/wishlist/shared" element={<SharedWishlistPage />} />
         <Route path="/search" element={<SearchResultsPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="/forgot-password" element={<ForgotPasswordPage />} />
         <Route path="/admin" element={<AdminLoginPage />} />
         <Route path="/order-history" element={<OrderHistoryPage />} />
         <Route path="/size-guide" element={<SizeGuidePage />} />

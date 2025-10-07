@@ -4,11 +4,19 @@ import AttendanceFormModal from '../../components/admin/AttendanceFormModal';
 import { AttendanceRecord } from '../../types';
 
 const AdminAttendancePage: React.FC = () => {
-  const { getAttendanceForDate } = useEmployees();
+  const { getAttendanceForDate, getAttendanceForMonth } = useEmployees();
+  const [viewMode, setViewMode] = useState<'daily' | 'monthly'>('daily');
   const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().toISOString().slice(0, 7));
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const attendanceForDay = useMemo(() => getAttendanceForDate(selectedDate), [selectedDate, getAttendanceForDate]);
+  const attendanceData = useMemo(() => {
+    if (viewMode === 'monthly') {
+        const [year, month] = selectedMonth.split('-').map(Number);
+        return getAttendanceForMonth(year, month - 1);
+    }
+    return getAttendanceForDate(selectedDate);
+  }, [selectedDate, selectedMonth, viewMode, getAttendanceForDate, getAttendanceForMonth]);
 
   const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const date = new Date(e.target.value);
@@ -17,10 +25,19 @@ const AdminAttendancePage: React.FC = () => {
     setSelectedDate(new Date(date.getTime() + userTimezoneOffset));
   };
 
+  const handleMonthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedMonth(e.target.value);
+  };
+
   const formatTime = (dateString: string | null) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
   };
+  
+  const formatDate = (dateString: string | null) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString([], { month: 'short', day: 'numeric' });
+  }
   
   const calculateDuration = (record: AttendanceRecord): string => {
     if (!record.clockOut) return 'Clocked In';
@@ -39,12 +56,37 @@ const AdminAttendancePage: React.FC = () => {
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-4">
         <h1 className="text-3xl font-serif font-bold text-text-primary">Attendance Log</h1>
         <div className="flex items-center space-x-4">
-            <input 
-                type="date"
-                value={selectedDate.toISOString().split('T')[0]}
-                onChange={handleDateChange}
-                className="bg-surface border border-gray-300 rounded-md p-2"
-            />
+            <div className="flex space-x-1 bg-gray-200 p-1 rounded-md">
+                <button 
+                    onClick={() => setViewMode('daily')}
+                    className={`px-3 py-1 text-sm font-semibold rounded-md transition-colors ${viewMode === 'daily' ? 'bg-white shadow' : 'text-text-secondary hover:bg-gray-300'}`}
+                >
+                    Daily
+                </button>
+                <button 
+                    onClick={() => setViewMode('monthly')}
+                    className={`px-3 py-1 text-sm font-semibold rounded-md transition-colors ${viewMode === 'monthly' ? 'bg-white shadow' : 'text-text-secondary hover:bg-gray-300'}`}
+                >
+                    Monthly
+                </button>
+            </div>
+            
+            {viewMode === 'daily' ? (
+                 <input 
+                    type="date"
+                    value={selectedDate.toISOString().split('T')[0]}
+                    onChange={handleDateChange}
+                    className="bg-surface border border-gray-300 rounded-md p-2"
+                />
+            ) : (
+                <input
+                    type="month"
+                    value={selectedMonth}
+                    onChange={handleMonthChange}
+                    className="bg-surface border border-gray-300 rounded-md p-2"
+                />
+            )}
+           
             <button
               onClick={() => setIsModalOpen(true)}
               className="bg-accent text-white font-bold py-2 px-4 rounded-md hover:bg-opacity-90 transition-colors duration-300"
@@ -58,6 +100,7 @@ const AdminAttendancePage: React.FC = () => {
         <table className="w-full text-sm text-left text-text-secondary">
           <thead className="text-xs text-text-primary uppercase bg-gray-50">
             <tr>
+              {viewMode === 'monthly' && <th scope="col" className="px-6 py-3">Date</th>}
               <th scope="col" className="px-6 py-3">Employee</th>
               <th scope="col" className="px-6 py-3">Clock In</th>
               <th scope="col" className="px-6 py-3">Clock Out</th>
@@ -65,8 +108,9 @@ const AdminAttendancePage: React.FC = () => {
             </tr>
           </thead>
           <tbody>
-            {attendanceForDay.map((record) => (
+            {attendanceData.map((record) => (
               <tr key={record.id} className="bg-white border-b hover:bg-gray-50">
+                {viewMode === 'monthly' && <td className="px-6 py-4">{formatDate(record.clockIn)}</td>}
                 <th scope="row" className="px-6 py-4 font-medium text-text-primary whitespace-nowrap">
                   {record.employeeName}
                 </th>
@@ -77,8 +121,8 @@ const AdminAttendancePage: React.FC = () => {
             ))}
           </tbody>
         </table>
-        {attendanceForDay.length === 0 && (
-            <p className="text-center p-8">No attendance records for this date.</p>
+        {attendanceData.length === 0 && (
+            <p className="text-center p-8">No attendance records for this period.</p>
         )}
       </div>
       

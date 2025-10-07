@@ -17,7 +17,7 @@ const getAverageRating = (product: Product): number => {
 };
 
 const ProductListPage: React.FC = () => {
-  const { categoryName } = useParams<{ categoryName: 'summer' | 'winter' }>();
+  const { categoryName } = useParams<{ categoryName: 'clothing' | 'fragrance' | 'jewelry' | 'accessories' }>();
   const { products: allProducts } = useProducts();
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);

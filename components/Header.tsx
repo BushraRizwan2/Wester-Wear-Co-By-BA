@@ -138,7 +138,7 @@ const Header: React.FC = () => {
             match: newQuery
         }));
 
-    const categoryMatches = ['Summer', 'Winter']
+    const categoryMatches = ['Clothing', 'Fragrance', 'Jewelry', 'Accessories']
         .filter(c => c.toLowerCase().includes(lowerCaseQuery))
         .map(c => ({
             type: 'category' as const,
@@ -180,12 +180,18 @@ const Header: React.FC = () => {
                 </NavLink>
               </div>
               <div className="hidden md:block">
-                <div className="ml-10 flex items-baseline space-x-8">
-                  <NavLink to="/category/summer" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
-                    Summer
+                <div className="ml-10 flex items-baseline space-x-6">
+                  <NavLink to="/category/clothing" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
+                    Clothing
                   </NavLink>
-                  <NavLink to="/category/winter" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
-                    Winter
+                   <NavLink to="/category/fragrance" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
+                    Fragrance
+                  </NavLink>
+                  <NavLink to="/category/jewelry" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
+                    Jewelry
+                  </NavLink>
+                  <NavLink to="/category/accessories" className={({ isActive }) => (isActive ? activeLinkClass : inactiveLinkClass)}>
+                    Accessories
                   </NavLink>
                 </div>
               </div>
@@ -319,8 +325,10 @@ const Header: React.FC = () => {
       >
         <div className="flex-1 overflow-y-auto pt-20"> {/* pt-20 to account for header height */}
            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
-              <NavLink to="/category/summer" className={mobileLinkClass} onClick={handleMobileLinkClick}>Summer</NavLink>
-              <NavLink to="/category/winter" className={mobileLinkClass} onClick={handleMobileLinkClick}>Winter</NavLink>
+              <NavLink to="/category/clothing" className={mobileLinkClass} onClick={handleMobileLinkClick}>Clothing</NavLink>
+              <NavLink to="/category/fragrance" className={mobileLinkClass} onClick={handleMobileLinkClick}>Fragrance</NavLink>
+              <NavLink to="/category/jewelry" className={mobileLinkClass} onClick={handleMobileLinkClick}>Jewelry</NavLink>
+              <NavLink to="/category/accessories" className={mobileLinkClass} onClick={handleMobileLinkClick}>Accessories</NavLink>
           </div>
           {/* User Account Links */}
           <div className="pt-4 pb-3 border-t border-gray-200">

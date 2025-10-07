@@ -27,7 +27,7 @@ const ClockIcon = () => (
 
 const InventoryIcon = () => (
     <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
     </svg>
 );
 
@@ -59,7 +59,7 @@ const ExternalLinkIcon = () => (
 const AdminSidebar: React.FC = () => {
   
   const activeLinkClass = 'bg-primary text-white';
-  const inactiveLinkClass = 'text-gray-300 hover:bg-text-secondary hover:text-white';
+  const inactiveLinkClass = 'text-white/70 hover:bg-primary-dark hover:text-white';
 
   const linkClasses = ({ isActive }: { isActive: boolean }) =>
     `flex items-center px-4 py-3 my-1 transition-colors duration-200 rounded-md ${isActive ? activeLinkClass : inactiveLinkClass}`;
@@ -103,8 +103,8 @@ const AdminSidebar: React.FC = () => {
             <span className="mx-4 font-medium">Settings</span>
         </NavLink>
       </nav>
-      <div className="p-4 border-t border-gray-700">
-          <Link to="/" className="flex items-center justify-center bg-gray-600 text-white font-bold py-2 px-4 rounded-md hover:bg-gray-500 transition-colors duration-300 w-full">
+      <div className="p-4 border-t border-white/20">
+          <Link to="/" className="flex items-center justify-center bg-primary-dark text-white font-bold py-2 px-4 rounded-md hover:bg-primary transition-colors duration-300 w-full">
               <ExternalLinkIcon />
               View Site
           </Link>

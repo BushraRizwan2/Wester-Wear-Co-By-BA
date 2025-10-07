@@ -10,6 +10,7 @@ interface EmployeeContextType {
   updateEmployee: (employee: Employee) => void;
   deleteEmployee: (employeeId: string) => void;
   getAttendanceForDate: (date: Date) => (AttendanceRecord & { employeeName: string })[];
+  getAttendanceForMonth: (year: number, month: number) => (AttendanceRecord & { employeeName: string })[];
   addAttendanceRecord: (record: Omit<AttendanceRecord, 'id'>) => void;
   calculateHoursForPeriod: (employeeId: string, startDate: Date, endDate: Date) => number;
 }
@@ -58,6 +59,22 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
         .sort((a, b) => new Date(a.clockIn).getTime() - new Date(b.clockIn).getTime());
   };
 
+  const getAttendanceForMonth = (year: number, month: number): (AttendanceRecord & { employeeName: string })[] => {
+    return attendanceRecords
+        .filter(rec => {
+            const clockInDate = new Date(rec.clockIn);
+            return clockInDate.getFullYear() === year && clockInDate.getMonth() === month;
+        })
+        .map(rec => {
+            const employee = getEmployeeById(rec.employeeId);
+            return {
+                ...rec,
+                employeeName: employee ? employee.name : 'Unknown Employee'
+            };
+        })
+        .sort((a, b) => new Date(a.clockIn).getTime() - new Date(b.clockIn).getTime());
+  };
+
   const addAttendanceRecord = (recordData: Omit<AttendanceRecord, 'id'>) => {
     const newRecord: AttendanceRecord = {
         ...recordData,
@@ -89,7 +106,7 @@ export const EmployeeProvider: React.FC<{ children: ReactNode }> = ({ children }
 
 
   return (
-    <EmployeeContext.Provider value={{ employees, attendanceRecords, getEmployeeById, addEmployee, updateEmployee, deleteEmployee, getAttendanceForDate, addAttendanceRecord, calculateHoursForPeriod }}>
+    <EmployeeContext.Provider value={{ employees, attendanceRecords, getEmployeeById, addEmployee, updateEmployee, deleteEmployee, getAttendanceForDate, getAttendanceForMonth, addAttendanceRecord, calculateHoursForPeriod }}>
       {children}
     </EmployeeContext.Provider>
   );

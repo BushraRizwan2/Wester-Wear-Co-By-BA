@@ -53,8 +53,7 @@ const Footer: React.FC = () => {
             <h4 className="font-semibold tracking-wider uppercase text-gray-200">Shop</h4>
             <ul className="mt-4 space-y-3">
               <li><Link to="/" className="text-gray-300 hover:text-white transition-colors duration-300">Home</Link></li>
-              <li><Link to="/category/summer" className="text-gray-300 hover:text-white transition-colors duration-300">Summer Collection</Link></li>
-              <li><Link to="/category/winter" className="text-gray-300 hover:text-white transition-colors duration-300">Winter Collection</Link></li>
+              <li><Link to="/category/clothing" className="text-gray-300 hover:text-white transition-colors duration-300">Clothing Collection</Link></li>
               <li><Link to="/wishlist" className="text-gray-300 hover:text-white transition-colors duration-300">My Wishlist</Link></li>
               <li><Link to="/cart" className="text-gray-300 hover:text-white transition-colors duration-300">Shopping Cart</Link></li>
             </ul>
